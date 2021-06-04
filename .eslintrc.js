@@ -7,7 +7,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended']
+  extends: ['eslint:recommended', 'plugin:react/recommended'],
   parserOptions: {
     ecmaFeatures: {
       experimentalObjectRestSpread: true,
@@ -18,11 +18,22 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'react/prop-types': ['off'],
-    indent: ['error', 2, { SwitchCase : 1 }],
+    'react/display-name': ['off'],
+    'react/no-unescaped-entities': ['off'],
+    indent: ['error', 2, {SwitchCase: 1}],
     'linebreak-style': ['error', 'unix'],
-    quotes : ['error', 'single'],
-    semi : ['error', 'always'],
-    'no-console': ['warn', { allow : ['info', 'error'] }],
-    'arrow-parens': ['error', 'always'],
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
+    'no-console': ['warn', {allow: ['clear', 'info', 'error', 'dir', 'trace']}],
+    curly: 'error',
+    'no-else-return': 'error',
+    'no-unneeded-ternary': 'error',
+    'no-useless-return': 'error',
+    'no-var': 'error',
+    'one-var': ['error', 'never'],
+    'prefer-arrow-callback': 'error',
+    strict: 'error',
+    'symbol-description': 'error',
+    yoda: ['error', 'never', {exceptRange: true}],
   },
 };
