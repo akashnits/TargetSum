@@ -7,7 +7,13 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export default class randomNumber extends Component {
+import PropTypes from 'prop-types';
+
+export default class RandomNumber extends Component {
+  static propTypes = {
+    isDisabled : PropTypes.bool.isRequired,
+    number: PropTypes.number.isRequired,
+  }
   handleClick = () => {
     // add to numberSelected list
     if(this.props.isDisabled) { return;}

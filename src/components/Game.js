@@ -11,7 +11,8 @@ import RandomNumber from './RandomNumber';
 export default class Game extends Component {
 
   state = {
-    selectedNumberIndices: []
+    selectedNumberIndices: [],
+    remainingSeconds : this.props.initialSeconds,
   };
   isNumberSelected = (numberIndex) => {
     return (this.state.selectedNumberIndices.indexOf(numberIndex) >= 0);
@@ -29,17 +30,40 @@ export default class Game extends Component {
   }
 
   gameStatus = () => {
+    if(this.state.remainingSeconds === 0){
+      return 'LOST';
+    }
     // Can be 'Playing', 'Won', 'Lost'
     const sumSelected = this.state.selectedNumberIndices.reduce((acc, curr) => {
       return acc + this.randomNumbers[curr];
     }, 0);
 
     if( sumSelected === this.target ){
+      clearInterval(this.intervalId);
       return 'WON';
     }else if(sumSelected < this.target){
       return 'PLAYING';
     }
+    clearInterval(this.intervalId);
     return 'LOST';
+  
+  }
+
+  componentDidMount(){
+    this.intervalId = setInterval(() => {
+      //decrement remainingSeconds
+      this.setState((prevState) => {
+        return {remainingSeconds: prevState.remainingSeconds - 1};
+      }, () => {
+        if(this.state.remainingSeconds === 0){
+          clearInterval(this.intervalId);
+        }
+      });
+    }, 1000);
+  }
+
+  componentDidUnmount(){
+    clearInterval(this.intervalId);
   }
 
   render() {
@@ -56,6 +80,7 @@ export default class Game extends Component {
               onPress={this.selectNumber}/>
           )}
         </View>
+        <Text> {this.state.remainingSeconds}</Text>
       </View>
     );
   }
