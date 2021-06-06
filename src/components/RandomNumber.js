@@ -9,12 +9,15 @@ import {
 
 export default class randomNumber extends Component {
   handleClick = () => {
-    console.log(this.props.number);
+    //TODO: add to numberSelected list
   };
   render() {
     return (
       <TouchableOpacity onPress={this.handleClick}>
-        <Text style={styles.randomNumber}>{this.props.number}</Text>
+        <Text style={[styles.randomNumber,  (this.props.isSelected && styles.selected)]}>
+          { /* {console.log(`isSelected for ${this.props.number}: ${this.props.isSelected}` )} */ }
+          {this.props.number}
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -31,5 +34,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     width: 100,
     textAlign:'center'
+  },
+  selected : {
+    opacity: 0.3
   }
 });

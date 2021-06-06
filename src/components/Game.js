@@ -10,6 +10,12 @@ import RandomNumber from './RandomNumber';
 
 export default class Game extends Component {
 
+  state = {
+    selectedNumbers: []
+  };
+  isNumberSelected = (numberIndex) => {
+    return (this.state.selectedNumbers.indexOf(numberIndex) >= 0);
+  };
   randomNumbers = Array.from({ length : this.props.randomNumnberCount})
     .map(() => 1 + Math.floor(10 * Math.random()));
 
@@ -22,7 +28,11 @@ export default class Game extends Component {
         <Text style={styles.target}> {this.target} </Text>
         <View style={styles.randomNumberContainer}>
           {this.randomNumbers.map((randomNumber, index) =>
-            <RandomNumber key={index} number={randomNumber} />)}
+            (<RandomNumber
+              key={index}
+              number={randomNumber}
+              isSelected={this.isNumberSelected(index)}/>
+            ))}
         </View>
       </View>
     );
