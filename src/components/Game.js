@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  Button,
   StyleSheet,
 } from 'react-native';
 import RandomNumber from './RandomNumber';
@@ -94,6 +95,9 @@ export default class Game extends Component {
               onPress={this.selectNumber}/>
           )}
         </View>
+        {(this.gameStatus !== 'PLAYING') &&
+          <Button title= "Play Again" onPress= {this.props.onPlayAgain}> </Button>
+        }
         <Text> {this.state.remainingSeconds}</Text>
       </View>
     );
