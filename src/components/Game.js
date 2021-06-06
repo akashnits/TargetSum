@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import RandomNumber from './RandomNumber';
+import shuffle from 'lodash.shuffle';
 
 export default class Game extends Component {
 
@@ -14,28 +15,32 @@ export default class Game extends Component {
     selectedNumberIndices: [],
     remainingSeconds : this.props.initialSeconds,
   };
+
+  gameStatus = 'PLAYING'
+
   isNumberSelected = (numberIndex) => {
     return (this.state.selectedNumberIndices.indexOf(numberIndex) >= 0);
   };
   randomNumbers = Array.from({ length : this.props.randomNumnberCount})
     .map(() => 1 + Math.floor(10 * Math.random()));
 
-  target = this.randomNumbers.slice(0, this.props.randomNumnberCount- (10 * Math.random()))
+  target = this.randomNumbers.slice(0, this.props.randomNumnberCount- 2)
     .reduce((acc, curr) => acc + curr, 0);
 
+  shuffledRandomNumbers = shuffle(this.randomNumbers)
   selectNumber = (index) => {
     this.setState((prevState) => ({
       selectedNumberIndices: [...prevState.selectedNumberIndices, index],
     }));
   }
 
-  gameStatus = () => {
-    if(this.state.remainingSeconds === 0){
+  calcGameStatus = (nextState) => {
+    if(nextState.remainingSeconds === 0){
       return 'LOST';
     }
     // Can be 'Playing', 'Won', 'Lost'
-    const sumSelected = this.state.selectedNumberIndices.reduce((acc, curr) => {
-      return acc + this.randomNumbers[curr];
+    const sumSelected = nextState.selectedNumberIndices.reduce((acc, curr) => {
+      return acc + this.shuffledRandomNumbers[curr];
     }, 0);
 
     if( sumSelected === this.target ){
@@ -46,7 +51,16 @@ export default class Game extends Component {
     }
     clearInterval(this.intervalId);
     return 'LOST';
-  
+  }
+
+  componentWillUpdate(nextProps, nextState){
+    if(nextState.selectedNumberIndices !== this.state.selectedNumberIndices ||
+    nextState.remainingSeconds === 0){
+      this.gameStatus = this.calcGameStatus(nextState);
+      if(this.gameStatus !== 'PLAYING'){
+        clearInterval(this.intervalId);
+      }
+    }
   }
 
   componentDidMount(){
@@ -69,14 +83,14 @@ export default class Game extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={[styles.target , styles[`STATUS_${this.gameStatus()}`]]}> {this.target} </Text>
+        <Text style={[styles.target , styles[`STATUS_${this.gameStatus}`]]}> {this.target} </Text>
         <View style={styles.randomNumberContainer}>
-          {this.randomNumbers.map((randomNumber, index) =>
+          {this.shuffledRandomNumbers.map((randomNumber, index) =>
             <RandomNumber
               key={index}
               id={index}
               number={randomNumber}
-              isDisabled={this.isNumberSelected(index) || this.gameStatus() !== 'PLAYING'}
+              isDisabled={this.isNumberSelected(index) || this.gameStatus !== 'PLAYING'}
               onPress={this.selectNumber}/>
           )}
         </View>
