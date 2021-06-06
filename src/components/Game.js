@@ -22,6 +22,11 @@ export default class Game extends Component {
   target = this.randomNumbers.slice(0, this.props.randomNumnberCount- (10 * Math.random()))
     .reduce((acc, curr) => acc + curr, 0);
 
+  selectNumber = (index) => {
+    this.setState((prevState) => ({
+      selectedNumbers: [...prevState.selectedNumbers, index],
+    }));
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -30,8 +35,10 @@ export default class Game extends Component {
           {this.randomNumbers.map((randomNumber, index) =>
             (<RandomNumber
               key={index}
+              id={index}
               number={randomNumber}
-              isSelected={this.isNumberSelected(index)}/>
+              isDisabled={this.isNumberSelected(index)}
+              onPress={this.selectNumber}/>
             ))}
         </View>
       </View>
