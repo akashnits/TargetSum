@@ -10,6 +10,7 @@ import {
 export default class randomNumber extends Component {
   handleClick = () => {
     // add to numberSelected list
+    if(this.props.isDisabled) { return;}
     this.props.onPress(this.props.id);
   };
   render() {

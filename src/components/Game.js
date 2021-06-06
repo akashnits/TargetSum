@@ -11,10 +11,10 @@ import RandomNumber from './RandomNumber';
 export default class Game extends Component {
 
   state = {
-    selectedNumbers: []
+    selectedNumberIndices: []
   };
   isNumberSelected = (numberIndex) => {
-    return (this.state.selectedNumbers.indexOf(numberIndex) >= 0);
+    return (this.state.selectedNumberIndices.indexOf(numberIndex) >= 0);
   };
   randomNumbers = Array.from({ length : this.props.randomNumnberCount})
     .map(() => 1 + Math.floor(10 * Math.random()));
@@ -24,22 +24,37 @@ export default class Game extends Component {
 
   selectNumber = (index) => {
     this.setState((prevState) => ({
-      selectedNumbers: [...prevState.selectedNumbers, index],
+      selectedNumberIndices: [...prevState.selectedNumberIndices, index],
     }));
   }
+
+  gameStatus = () => {
+    // Can be 'Playing', 'Won', 'Lost'
+    const sumSelected = this.state.selectedNumberIndices.reduce((acc, curr) => {
+      return acc + this.randomNumbers[curr];
+    }, 0);
+
+    if( sumSelected === this.target ){
+      return 'WON';
+    }else if(sumSelected < this.target){
+      return 'PLAYING';
+    }
+    return 'LOST';
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.target}> {this.target} </Text>
+        <Text style={[styles.target , styles[`STATUS_${this.gameStatus()}`]]}> {this.target} </Text>
         <View style={styles.randomNumberContainer}>
           {this.randomNumbers.map((randomNumber, index) =>
-            (<RandomNumber
+            <RandomNumber
               key={index}
               id={index}
               number={randomNumber}
-              isDisabled={this.isNumberSelected(index)}
+              isDisabled={this.isNumberSelected(index) || this.gameStatus() !== 'PLAYING'}
               onPress={this.selectNumber}/>
-            ))}
+          )}
         </View>
       </View>
     );
@@ -52,7 +67,7 @@ const styles = StyleSheet.create({
   },
   target: {
     marginTop: 80,
-    backgroundColor: 'green',
+    backgroundColor: 'gray',
     fontSize: 40,
     textAlign: 'center',
     marginHorizontal: 50
@@ -64,4 +79,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     margin: 20
   },
+  STATUS_PLAYING: {
+    backgroundColor: 'gray'
+  },
+  STATUS_WON: {
+    backgroundColor: 'green'
+  },
+  STATUS_LOST: {
+    backgroundColor: 'red'
+  }
 });
